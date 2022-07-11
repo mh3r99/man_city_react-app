@@ -1,10 +1,11 @@
 import { AppBar, Button, Toolbar } from "@material-ui/core";
 import React from "react";
 import { Link } from "react-router-dom";
+import CityLogo from "../ui/CityLogo";
 
 const Header = () => {
   return (
-    <div>
+    <>
       <AppBar
         position="fixed"
         style={{
@@ -16,7 +17,9 @@ const Header = () => {
       >
         <Toolbar style={{ display: "flex" }}>
           <div style={{ flexGrow: 1 }}>
-            <div className="header_logo">LOGO</div>
+            <div className="header_logo">
+              <CityLogo link linkTo="/" width="70px" height="70px" />
+            </div>
           </div>
 
           <Link to="/the_team">
@@ -27,7 +30,7 @@ const Header = () => {
           </Link>
         </Toolbar>
       </AppBar>
-    </div>
+    </>
   );
 };
 
