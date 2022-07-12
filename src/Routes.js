@@ -1,6 +1,7 @@
 import React from "react";
 import { Routes as Switch, Route } from "react-router-dom";
 import Home from "./components/Home/Home";
+import SignIn from "./components/SignIn/SignIn";
 import Layout from "./Hoc/Layout";
 
 const Routes = (props) => {
@@ -9,6 +10,7 @@ const Routes = (props) => {
       <Layout>
         <Switch>
           <Route path="/" element={<Home />} />
+          <Route path="/sign-in" element={<SignIn />} />
         </Switch>
       </Layout>
     </>

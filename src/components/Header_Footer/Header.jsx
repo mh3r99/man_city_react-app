@@ -28,6 +28,9 @@ const Header = () => {
           <Link to="/the_matches">
             <Button color="inherit">Matches</Button>
           </Link>
+          <Link to="/dashboard">
+            <Button color="inherit">Dashboard</Button>
+          </Link>
         </Toolbar>
       </AppBar>
     </>
