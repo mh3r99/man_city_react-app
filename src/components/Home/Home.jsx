@@ -1,12 +1,7 @@
 import React from "react";
-import Featured from "./Featured/Featured";
 
 const Home = () => {
-  return (
-    <div className="bck_blue">
-      <Featured />
-    </div>
-  );
+  return <div className="bck_blue"></div>;
 };
 
 export default Home;

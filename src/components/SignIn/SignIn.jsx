@@ -3,6 +3,9 @@ import { CircularProgress } from "@material-ui/core";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { db } from "../../firebase";
+import { toast } from "react-toastify";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -21,9 +24,29 @@ const SignIn = () => {
     }),
     onSubmit: (values) => {
       setLoading(true);
-      console.log(values);
+      submitForm(values);
     },
   });
+
+  const submitForm = async (values) => {
+    try {
+      const auth = getAuth();
+
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        values.email,
+        values.password
+      );
+
+      if (userCredential.user) {
+        toast.success("Wow so easy!");
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      setLoading(false);
+      toast.error(error.message);
+    }
+  };
 
   return (
     <div className="container">
