@@ -7,8 +7,9 @@ import PrivateRoute from "./components/PrivateRoute";
 import SignIn from "./components/SignIn/SignIn";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Dashboard from "./components/Admin/Dashboard";
 
-const Routes = () => {
+const App = () => {
   return (
     <>
       <BrowserRouter>
@@ -17,7 +18,7 @@ const Routes = () => {
           <Route path="/" element={<Home />} />
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/dashboard" element={<PrivateRoute />}>
-            {/* <Route path="/dashboard" element={<Home />} /> */}
+            <Route path="/dashboard" element={<Dashboard />} />
           </Route>
         </Switch>
         <ToastContainer />
@@ -27,4 +28,4 @@ const Routes = () => {
   );
 };
 
-export default Routes;
+export default App;

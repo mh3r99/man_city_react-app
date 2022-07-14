@@ -1,34 +1,16 @@
-import { AppBar, Button, Toolbar } from "@material-ui/core";
-import React, { useState, useEffect, useRef } from "react";
+import { AppBar, Button, CircularProgress, Toolbar } from "@material-ui/core";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStatus } from "../hooks/useAuthStatus";
 import CityLogo from "../ui/CityLogo";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 
 const Header = () => {
   const auth = getAuth();
   const navigate = useNavigate();
-
-  const [loggedIn, setLoggedIn] = useState(false);
-  const isMounted = useRef(true);
-
-  useEffect(() => {
-    if (isMounted) {
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          setLoggedIn(true);
-        }
-      });
-    }
-
-    return () => {
-      isMounted.current = false;
-    };
-  }, [isMounted]);
+  const { loggedIn, checkingStatus } = useAuthStatus();
 
   const onLogout = () => {
     auth.signOut();
-    setLoggedIn(false);
     navigate("/");
   };
 
