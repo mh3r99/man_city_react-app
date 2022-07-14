@@ -1,8 +1,9 @@
-import { AppBar, Button, CircularProgress, Toolbar } from "@material-ui/core";
+import { AppBar, Button, Toolbar } from "@material-ui/core";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStatus } from "../hooks/useAuthStatus";
 import CityLogo from "../ui/CityLogo";
 import { getAuth } from "firebase/auth";
+import { toast } from "react-toastify";
 
 const Header = () => {
   const auth = getAuth();
@@ -11,6 +12,7 @@ const Header = () => {
 
   const onLogout = () => {
     auth.signOut();
+    toast.success("Good bye!!");
     navigate("/");
   };
 
