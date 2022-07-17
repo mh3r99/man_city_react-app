@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { db } from "../../firebase";
 import { toast } from "react-toastify";
 import { useAuthStatus } from "../hooks/useAuthStatus";
 
