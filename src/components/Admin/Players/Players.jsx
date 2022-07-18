@@ -2,8 +2,18 @@ import React, { useState, useEffect } from "react";
 import AdminLayout from "../../../Hoc/AdminLayout";
 import { playersCollection } from "../../../firebase";
 import { getDocs, query, limit, startAfter } from "firebase/firestore";
-import { Button } from "@material-ui/core";
+import {
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Paper,
+  CircularProgress,
+} from "@material-ui/core";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 const Players = () => {
   const [lastFetchedPlayers, setLastFetchedPlayers] = useState(null);
@@ -59,11 +69,71 @@ const Players = () => {
     setLoading(false);
   };
 
-  console.log(players);
-
   return (
     <AdminLayout title="The players">
-      <Button onClick={() => loadMorePlayers()}>Load more</Button>
+      <div className="mb-5">
+        <Button
+          disableElevation
+          variant="outlined"
+          component={Link}
+          to="/admin_players/add_player"
+        >
+          Add player
+        </Button>
+      </div>
+
+      <Paper className="mb-5">
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>First name</TableCell>
+              <TableCell>Last name</TableCell>
+              <TableCell>Number</TableCell>
+              <TableCell>Position</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {players
+              ? players.map((player) => (
+                  <TableRow key={player.id}>
+                    <TableCell>
+                      <Link to={`/admin_players/edit_player/${player.id}`}>
+                        {player.name}
+                      </Link>
+                    </TableCell>
+                    <TableCell>
+                      <Link to={`/admin_players/edit_player/${player.id}`}>
+                        {player.lastname}
+                      </Link>
+                    </TableCell>
+                    <TableCell>{player.number}</TableCell>
+                    <TableCell>{player.position}</TableCell>
+                  </TableRow>
+                ))
+              : null}
+          </TableBody>
+        </Table>
+      </Paper>
+
+      <Button
+        variant="contained"
+        color="primary"
+        disabled={loading}
+        onClick={() => loadMorePlayers()}
+      >
+        Load more
+      </Button>
+
+      <div className="admin_progress">
+        {loading ? (
+          <CircularProgress
+            thickness={7}
+            style={{
+              color: "#98c5e9",
+            }}
+          />
+        ) : null}
+      </div>
     </AdminLayout>
   );
 };
