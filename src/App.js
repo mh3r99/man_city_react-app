@@ -9,6 +9,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Dashboard from "./components/Admin/Dashboard";
 import Players from "./components/Admin/Players/Players";
+import AddEditPlayers from "./components/Admin/Players/AddEditPlayers";
 
 const App = () => {
   return (
@@ -23,6 +24,14 @@ const App = () => {
           </Route>
           <Route path="/admin_players" element={<PrivateRoute />}>
             <Route path="/admin_players" element={<Players />} />
+            <Route
+              path="/admin_players/add_player"
+              element={<AddEditPlayers />}
+            />
+            <Route
+              path="/admin_players/edit_player/:playerid"
+              element={<AddEditPlayers />}
+            />
           </Route>
         </Switch>
         <ToastContainer />
