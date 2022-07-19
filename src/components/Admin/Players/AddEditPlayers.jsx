@@ -11,8 +11,9 @@ import {
   TextField,
   FormHelperText,
 } from "@material-ui/core";
-import { playersCollection } from "../../../firebase";
-import { useParams } from "react-router-dom";
+import { db, playersCollection } from "../../../firebase";
+import { useNavigate, useParams } from "react-router-dom";
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 
 const defaultValues = {
   name: "",
@@ -43,6 +44,7 @@ const AddEditPlayers = () => {
   const [loading, setLoading] = useState(false);
   const [formType, setFormType] = useState("");
   const [values, setValues] = useState(defaultValues);
+  const navigate = useNavigate();
   const { playerid } = useParams();
 
   const formik = useFormik({
@@ -53,16 +55,59 @@ const AddEditPlayers = () => {
       lastname: Yup.string().required("This input is required"),
       number: Yup.number()
         .required("This input is required")
-        .min("0", "The minimum is 0")
-        .max("100", "The max is 100"),
+        .min(0, "The minimum is 0")
+        .max(100, "The max is 100"),
       position: Yup.string().required("This input is required"),
     }),
+    onSubmit: (values) => {
+      submitForm(values);
+    },
   });
+
+  const submitForm = async (values) => {
+    let dataToSubmit = values;
+    setLoading(true);
+
+    if (formType === "add") {
+      // add
+      try {
+        await setDoc(doc(playersCollection), dataToSubmit);
+        toast.success("Player added");
+        formik.resetForm();
+        navigate("/admin_players");
+      } catch (error) {
+        toast.error(error);
+      }
+    } else {
+      // edit
+      const docRef = doc(db, "players", playerid);
+
+      try {
+        await updateDoc(docRef, dataToSubmit);
+        toast.success("Player updated");
+      } catch (error) {
+        toast.error(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
 
   useEffect(() => {
     if (playerid) {
-      setFormType("edit");
-      // setValues(defaultValues);
+      const fetchPlayer = async () => {
+        const docRef = doc(db, "players", playerid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setFormType("edit");
+          setValues(docSnap.data());
+        } else {
+          toast.error("Sorry, nothing was found");
+        }
+      };
+
+      fetchPlayer();
     } else {
       setFormType("add");
       setValues(defaultValues);
@@ -104,6 +149,7 @@ const AddEditPlayers = () => {
             <div className="mb-5">
               <FormControl>
                 <TextField
+                  type="number"
                   id="number"
                   name="number"
                   variant="outlined"
