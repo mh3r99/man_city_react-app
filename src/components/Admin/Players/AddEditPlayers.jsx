@@ -14,8 +14,10 @@ import {
 import { db, playersCollection } from "../../../firebase";
 import { useNavigate, useParams } from "react-router-dom";
 import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL, getStorage } from "firebase/storage";
 
 const defaultValues = {
+  image: "",
   name: "",
   lastname: "",
   number: "",
@@ -47,6 +49,12 @@ const AddEditPlayers = () => {
   const navigate = useNavigate();
   const { playerid } = useParams();
 
+  // image upload
+  const [imageUpload, setImageUpload] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
+
+  const storage = getStorage();
+
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: values,
@@ -58,6 +66,7 @@ const AddEditPlayers = () => {
         .min(0, "The minimum is 0")
         .max(100, "The max is 100"),
       position: Yup.string().required("This input is required"),
+      image: Yup.string().required("This image is required"),
     }),
     onSubmit: (values) => {
       submitForm(values);
@@ -69,7 +78,6 @@ const AddEditPlayers = () => {
     setLoading(true);
 
     if (formType === "add") {
-      // add
       try {
         await setDoc(doc(playersCollection), dataToSubmit);
         toast.success("Player added");
@@ -79,7 +87,6 @@ const AddEditPlayers = () => {
         toast.error(error);
       }
     } else {
-      // edit
       const docRef = doc(db, "players", playerid);
 
       try {
@@ -91,6 +98,8 @@ const AddEditPlayers = () => {
         setLoading(false);
       }
     }
+
+    uploadFile();
   };
 
   useEffect(() => {
@@ -100,6 +109,12 @@ const AddEditPlayers = () => {
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
+          const imgName = docSnap.data().image;
+          const imageRef = ref(storage, `players/${imgName}`);
+          getDownloadURL(imageRef).then((url) => {
+            setImageUrl(url);
+          });
+
           setFormType("edit");
           setValues(docSnap.data());
         } else {
@@ -112,14 +127,65 @@ const AddEditPlayers = () => {
       setFormType("add");
       setValues(defaultValues);
     }
-  }, [playerid]);
+  }, [playerid, storage]);
+
+  const uploadFile = () => {
+    if (imageUpload == null) return;
+
+    const imageRef = ref(storage, `players/${imageUpload.name}`);
+    uploadBytes(imageRef, imageUpload).then((snapshot) => {
+      getDownloadURL(snapshot.ref).then((url) => {
+        setImageUrl(url);
+      });
+    });
+  };
+
+  console.log("render");
 
   return (
     <AdminLayout title={formType === "add" ? "Add player" : "Edit player"}>
       <div className="editplayers_dialog_wrapper">
         <div>
           <form onSubmit={formik.handleSubmit}>
-            image
+            {!imageUrl ? (
+              <FormControl error={selectIsError(formik, "image")}>
+                <input
+                  id="image"
+                  type="file"
+                  name="image"
+                  accept="image/*"
+                  onChange={(event) => {
+                    const img = event.target.files[0];
+                    if (img) {
+                      setImageUpload(img);
+                      setImageUrl(URL.createObjectURL(img));
+                      formik.setFieldValue("image", img.name);
+                    }
+                  }}
+                />
+                {selectError(formik, "image")}
+              </FormControl>
+            ) : (
+              <div className="image_upload_container">
+                <img
+                  style={{
+                    width: "100%",
+                  }}
+                  src={imageUrl}
+                  alt="player img"
+                />
+                <div
+                  className="remove"
+                  onClick={() => {
+                    formik.setFieldValue("image", "");
+                    setImageUrl("");
+                  }}
+                >
+                  Remove
+                </div>
+              </div>
+            )}
+
             <hr />
             <h4>Player info</h4>
             <div className="mb-5">
