@@ -11,6 +11,8 @@ import Dashboard from "./components/Admin/Dashboard";
 import Players from "./components/Admin/Players/Players";
 import AddEditPlayers from "./components/Admin/Players/AddEditPlayers";
 import TheTeam from "./components/TheTeam/TheTeam";
+import Matches from "./components/Admin/Matches/Matches";
+import AddEditMatches from "./components/Admin/Matches/AddEditMatches";
 
 const App = () => {
   return (
@@ -33,6 +35,17 @@ const App = () => {
             <Route
               path="/admin_players/edit_player/:playerid"
               element={<AddEditPlayers />}
+            />
+          </Route>
+          <Route path="/admin_matches" element={<PrivateRoute />}>
+            <Route path="/admin_matches" element={<Matches />} />
+            <Route
+              path="/admin_matches/add_match"
+              element={<AddEditMatches />}
+            />
+            <Route
+              path="/admin_matches/edit_match/:matchid"
+              element={<AddEditMatches />}
             />
           </Route>
         </Switch>
