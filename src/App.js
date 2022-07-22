@@ -10,6 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Dashboard from "./components/Admin/Dashboard";
 import Players from "./components/Admin/Players/Players";
 import AddEditPlayers from "./components/Admin/Players/AddEditPlayers";
+import TheTeam from "./components/TheTeam/TheTeam";
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
         <Switch>
           <Route path="/" element={<Home />} />
           <Route path="/sign-in" element={<SignIn />} />
+          <Route path="/the_team" element={<TheTeam />} />
           <Route path="/dashboard" element={<PrivateRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
           </Route>
