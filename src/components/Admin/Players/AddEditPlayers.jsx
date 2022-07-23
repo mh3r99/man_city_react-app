@@ -9,12 +9,12 @@ import {
   MenuItem,
   Select,
   TextField,
-  FormHelperText,
 } from "@material-ui/core";
 import { db, playersCollection } from "../../../firebase";
 import { useNavigate, useParams } from "react-router-dom";
 import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL, getStorage } from "firebase/storage";
+import { textError, selectError, selectIsError } from "../../../helpers";
 
 const defaultValues = {
   image: "",
@@ -23,24 +23,6 @@ const defaultValues = {
   number: "",
   position: "",
 };
-
-const textError = (formik, values) => ({
-  error: formik.errors[values] && formik.touched[values],
-  helperText:
-    formik.errors[values] && formik.touched[values]
-      ? formik.errors[values]
-      : null,
-});
-
-const selectError = (formik, values) => {
-  if (formik.errors[values] && formik.touched[values]) {
-    return <FormHelperText>{formik.errors[values]}</FormHelperText>;
-  }
-  return false;
-};
-
-const selectIsError = (formik, values) =>
-  formik.errors[values] && formik.touched[values];
 
 const AddEditPlayers = () => {
   const [loading, setLoading] = useState(false);
@@ -139,8 +121,6 @@ const AddEditPlayers = () => {
       });
     });
   };
-
-  console.log("render");
 
   return (
     <AdminLayout title={formType === "add" ? "Add player" : "Edit player"}>
