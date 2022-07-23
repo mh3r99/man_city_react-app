@@ -14,6 +14,7 @@ import TheTeam from "./components/TheTeam/TheTeam";
 import Matches from "./components/Admin/Matches/Matches";
 import AddEditMatches from "./components/Admin/Matches/AddEditMatches";
 import TheMatches from "./components/TheMatches/TheMatches";
+import NotFound from "./NotFound/NotFound";
 
 const App = () => {
   return (
@@ -50,6 +51,7 @@ const App = () => {
               element={<AddEditMatches />}
             />
           </Route>
+          <Route path="*" element={<NotFound />} />
         </Switch>
         <ToastContainer />
         <Footer />
