@@ -73,8 +73,6 @@ const TheMatches = () => {
     });
   };
 
-  console.log(state);
-
   return (
     <>
       {matches ? (
@@ -149,6 +147,7 @@ const TheMatches = () => {
                   </div>
                 </div>
               </div>
+              <MatchesList matches={state.filterMatches} />
             </div>
             <div className="right">
               <LeagueTable />
