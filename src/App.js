@@ -13,6 +13,7 @@ import AddEditPlayers from "./components/Admin/Players/AddEditPlayers";
 import TheTeam from "./components/TheTeam/TheTeam";
 import Matches from "./components/Admin/Matches/Matches";
 import AddEditMatches from "./components/Admin/Matches/AddEditMatches";
+import TheMatches from "./components/TheMatches/TheMatches";
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/the_team" element={<TheTeam />} />
+          <Route path="/the_matches" element={<TheMatches />} />
           <Route path="/dashboard" element={<PrivateRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
           </Route>
