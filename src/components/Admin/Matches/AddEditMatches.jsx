@@ -4,8 +4,10 @@ import * as Yup from "yup";
 import AdminLayout from "../../../Hoc/AdminLayout";
 import { toast } from "react-toastify";
 import { textError, selectError, selectIsError } from "../../../helpers";
-import { matchesCollection, teamsCollection } from "../../../firebase";
+import { db, matchesCollection, teamsCollection } from "../../../firebase";
 import { useParams } from "react-router-dom";
+import { FormControl, MenuItem, Select, TextField } from "@material-ui/core";
+import { getDocs, doc, getDoc } from "firebase/firestore";
 
 const defaultValues = {
   date: "",
@@ -67,18 +69,140 @@ const AddEditMatches = () => {
 
   useEffect(() => {
     if (matchid) {
+      const fetchMatch = async () => {
+        const docRef = doc(db, "matches", matchid);
+        const docSnap = await getDoc(docRef);
+
+        setValues(docSnap.data());
+      };
+
       setFormType("edit");
+      fetchMatch();
     } else {
       setFormType("add");
+      setValues(defaultValues);
     }
   }, [matchid]);
 
-  console.log(formType);
+  useEffect(() => {
+    const getTeams = async () => {
+      try {
+        const docSnap = await getDocs(teamsCollection);
+        const teams = docSnap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        setTeams(teams);
+      } catch (error) {
+        toast.error(error);
+      }
+    };
+
+    if (!teams) {
+      getTeams();
+    }
+  }, [teams]);
+
+  const showTeams = () =>
+    teams?.map((team) => (
+      <MenuItem key={team.id} value={team.shortName}>
+        {team.shortName}
+      </MenuItem>
+    ));
 
   return (
-    <AdminLayout
-      title={formType === "add" ? "Add match" : "Edit match"}
-    ></AdminLayout>
+    <AdminLayout title={formType === "add" ? "Add match" : "Edit match"}>
+      <div className="editmatch_dialog_wrapper">
+        <div>
+          <form onSubmit={formik.handleSubmit}>
+            <div>
+              <h4>Select date</h4>
+              <FormControl>
+                <TextField
+                  id="date"
+                  name="date"
+                  type="date"
+                  variant="outlined"
+                  {...formik.getFieldProps("date")}
+                  {...textError(formik, "date")}
+                />
+              </FormControl>
+            </div>
+
+            <hr />
+
+            <div>
+              <h4>Result local</h4>
+              <FormControl error={selectIsError(formik, "local")}>
+                <Select
+                  id="local"
+                  name="local"
+                  variant="outlined"
+                  displayEmpty
+                  {...formik.getFieldProps("local")}
+                >
+                  <MenuItem value="" disabled>
+                    Select a team
+                  </MenuItem>
+                  {showTeams()}
+                </Select>
+                {selectError(formik, "local")}
+              </FormControl>
+
+              <FormControl
+                style={{
+                  marginLeft: "10px",
+                }}
+              >
+                <TextField
+                  id="resultLocal"
+                  name="resultLocal"
+                  type="number"
+                  variant="outlined"
+                  {...formik.getFieldProps("resultLocal")}
+                  {...textError(formik, "resultLocal")}
+                />
+              </FormControl>
+            </div>
+
+            <div>
+              <h4>Result away</h4>
+              <FormControl error={selectIsError(formik, "away")}>
+                <Select
+                  id="away"
+                  name="away"
+                  variant="outlined"
+                  displayEmpty
+                  {...formik.getFieldProps("away")}
+                >
+                  <MenuItem value="" disabled>
+                    Select a team
+                  </MenuItem>
+                  {showTeams()}
+                </Select>
+                {selectError(formik, "away")}
+              </FormControl>
+
+              <FormControl
+                style={{
+                  marginLeft: "10px",
+                }}
+              >
+                <TextField
+                  id="resultAway"
+                  name="resultAway"
+                  type="number"
+                  variant="outlined"
+                  {...formik.getFieldProps("resultAway")}
+                  {...textError(formik, "resultAway")}
+                />
+              </FormControl>
+            </div>
+          </form>
+        </div>
+      </div>
+    </AdminLayout>
   );
 };
 
